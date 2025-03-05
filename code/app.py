@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 
 # Configuration for MongoDB with TLS enabled.
 # TODO Replace the connection string with your own.
-client = MongoClient("Insert your MongoDB connection string here")
+client = MongoClient("your-mongodb-connection-string")
 db = client.myDatabase
 emotion_records_collection = db.emotionRecords
 # test the db connection
