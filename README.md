@@ -64,7 +64,7 @@ This project was developed as part of a Group Project during the **Affective Com
 ### Cloning the Repository
 
 ```bash
-git clone <repository-link>
+git clone <https://github.com/cristiangavriliu/emotion-rate.git>
 cd <repository-directory>
 ```
 
