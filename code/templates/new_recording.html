@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title Id="top-title">Movie Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{{ url_for('static', filename='view_clip.js') }}"></script>
+
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+        }
+
+        .navbar {
+            background-color: #7c16f5;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: #b3b3b3 !important;
+        }
+
+        .search-button {
+            background-color: #ecae0f;
+            color: white;
+            border-color: #ecae0f;
+        }
+
+        .search-button:hover {
+            background-color: #ecae0f;
+            border-color: #ecae0f;
+        }
+
+        .search-button:active, .search-button:focus {
+            border-color: #ecae0f !important;
+            background-color: #ecae0f !important;
+        }
+
+        .form-control:focus {
+            border-color: #ecae0f;
+            box-shadow: none;
+        }
+
+        .stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: left;
+        }
+
+        .stars input[type="radio"] {
+            display: none;
+        }
+
+        .stars label::before {
+            content: "☆";
+            font-size: 20px;
+        }
+
+        .stars input[type="radio"]:checked ~ label::before {
+            content: "★";
+        }
+
+        #content {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+        }
+
+        #video {
+            flex: 1;
+        }
+
+        #emotion-stats {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .bar-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background-color: #f1f1f1;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            width: 80px;
+            padding-left: 5px;
+            text-align: left;
+            padding-right: 10px;
+            color: #141414;
+        }
+
+        .bar-wrapper {
+            flex-grow: 1;
+            background-color: #e1e1e1;
+        }
+
+        .bar {
+            height: 25px;
+            background-color: #1685e3;
+            text-align: right;
+            padding-right: 10px;
+            line-height: 25px;
+            color: black;
+            transition: width 0.5s;
+            width: 0%;
+        }
+
+        #logo {
+            height: 40px;
+        }
+
+        .index-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .index-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        #redirectToFormContainer {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s, visibility 1s;
+
+            margin-top: 50px;
+        }
+
+        #redirectToFormContainer.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .boardCountContainer{
+            padding-left: 140px;
+        }
+    </style>
+</head>
+<body data-movie-id="{{ movie }}">
+
+<!-- Nav bar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <a href="/">
+        <img src="../static/logo.png" id="logo">
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Top Movies</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">New Movies</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Genre</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Emotional Genre</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about">About Emotion Rate</a></li>
+        </ul>
+
+        <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit"><i
+                    class="bi bi-search"></i></button>
+        </form>
+
+    </div>
+</nav>
+
+<div class="container-fluid mt-5">
+
+    <!-- Container -->
+    <div class="row justify-content-center " style="margin-top: 80px">
+
+
+        <!-- Video Camera Feed -->
+        <div class="col-md-3">
+            <h3>Video Stream</h3>
+            <div id="video">
+                <img id="videoStream" src="/static/camera.png" width="100%">
+                <button id="toggleButton" class="btn btn-success mt-3 ">Start Camera</button>
+            </div>
+
+            <!-- Checkbox for face landmarks -->
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="checkbox" id="markLandmarks">
+                <label class="form-check-label" for="markLandmarks">
+                    Mark Face Landmarks
+                </label>
+            </div>
+
+            {#            button to redirect to feedback form#}
+            <div id="redirectToFormContainer">
+                <h3>Share your feedback</h3>
+                <p>Thank you for contributing! Please share your feedback so we can further improve EmotionRate!</p>
+                <button id="redirectToFormBtn" class="btn btn-info">Share Feedback</button>
+            </div>
+        </div>
+
+        <!-- Video Stream -->
+        <div class="col-md-6">
+            <video id="videoClip" controls style="width: 100%; height: auto; object-fit: contain">
+                <source src="../static/film/test.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="col-md-3" id="emotion-stats">
+            <h3>Emotion Stats</h3>
+            <div class="bar-container">
+                <div class="label">Angry</div>
+                <div class="bar-wrapper">
+                    <div id="Angry" class="bar bg-danger">0%</div>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div class="label">Disgust</div>
+                <div class="bar-wrapper">
+                    <div id="Disgust" class="bar bg-success ">0%</div>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div class="label">Fear</div>
+                <div class="bar-wrapper">
+                    <div id="Fear" class="bar bg-info">0%</div>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div class="label">Happy</div>
+                <div class="bar-wrapper">
+                    <div id="Happy" class="bar bg-warning">0%</div>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div class="label">Sad</div>
+                <div class="bar-wrapper">
+                    <div id="Sad" class="bar bg-primary">0%</div>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div class="label">Surprise</div>
+                <div class="bar-wrapper">
+                    <div id="Surprise" class="bar" style="background-color: #6E757C">0%</div>
+                </div>
+            </div>
+            <div id="bored-stats">
+                <h4>Bored: <span id="Bored">0</span></h4>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Title -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6 text-left">
+            <h2 id="clipTitle">{{ movie }}</h2>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6 text-left">
+            <h5>Description</h5>
+            <p id="clipDescription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula vehicula
+                ex, ac semper libero imperdiet in. Morbi accumsan turpis ut ultricies fermentum. Proin vel orci eget
+                nulla congue viverra. Suspendisse potenti. Nullam facilisis ante vitae velit facilisis, at pretium
+                tortor malesuada. Aliquam erat .</p>
+        </div>
+    </div>
+
+
+    <!-- Emotion Rate -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <h5>Emotion Rate</h5>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0"
+                     aria-valuemax="100"></div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 20%" aria-valuenow="20"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-info" role="progressbar" style="width: 25%" aria-valuenow="25"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 15%" aria-valuenow="15"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 10%" aria-valuenow="10"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 15%" aria-valuenow="15"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <div class="index-container">
+            <div class="index-item">
+                <div class="color-box bg-danger"></div>
+                <span class="emotion-text"> 00.0% - Angry</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-success"></div>
+                <span class="emotion-text">00.0% - Disgust</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-info"></div>
+                <span class="emotion-text">00.0% - Fear</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-warning"></div>
+                <span class="emotion-text">00.0% - Happy</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-primary"></div>
+                <span class="emotion-text">00.0% - Sad</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box" style="background-color: #6E757C"></div>
+                <span class="emotion-text">00.0% - Surprised</span>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-3 boardCountContainer">
+        <div id="boardCount">Board count:</div>
+    </div>
+
+
+
+    <!-- Comment Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <h5>Reviews:</h5>
+
+            <!-- Random Comments -->
+            <div class="mt-3">
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">User123: ★★★★☆</h6>
+                        <p class="card-text">Blarg! Flibber floo waddle doodle! So zippy and zappy!</p>
+                    </div>
+                </div>
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">MovieFanatic: ★★★☆☆ </h6>
+                        <p class="card-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tempus,
+                            quam at tempor facilisis.</p>
+                    </div>
+                </div>
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Cinephile42: ★★★★★</h6>
+                        <p class="card-text">Egestas fringilla phasellus faucibus scelerisque eleifend donec pretium
+                            vulputate sapien.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Section Title and Info Icon -->
+            <span style="display: flex; align-items: center;">
+                <h5 style="margin-right: 10px;" class="mt-3">Write your own review: </h5>
+            </span>
+
+            <!-- Star Rating -->
+            <div class="stars">
+                <input type="radio" name="star" id="star5" value="5"><label for="star5"></label>
+                <input type="radio" name="star" id="star4" value="4"><label for="star4"></label>
+                <input type="radio" name="star" id="star3" value="3"><label for="star3"></label>
+                <input type="radio" name="star" id="star2" value="2"><label for="star2"></label>
+                <input type="radio" name="star" id="star1" value="1"><label for="star1"></label>
+            </div>
+
+            <!-- Review Form -->
+            <div class="form-group">
+                <textarea class="form-control" id="comment" rows="3" placeholder="Write a review..."></textarea>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <span data-toggle="popover" data-content="Submit your review Completely anonymously"
+                  style="margin-left: 10px;">
+                <i class="bi bi-info-circle"> </i>
+            </span>
+
+            <br>
+            <br>
+            <br>
+
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    async function fetchEmotionFeed() {
+        const response = await fetch('/emotion_feed');
+        const data = await response.json();
+        for (const emotion in data) {
+            const bar = document.getElementById(emotion);
+            bar.style.width = data[emotion] + '%';
+            bar.textContent = data[emotion].toFixed(2) + '%';
+        }
+    }
+
+    setInterval(fetchEmotionFeed, 1000);
+
+    async function fetchBoredFeed() {
+        const response = await fetch('/bored_feed');
+        const data = await response.json();
+        const bored_counter = document.getElementById('Bored');
+        bored_counter.textContent = data['Boredom'];
+    }
+
+    setInterval(fetchBoredFeed, 1000);
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.getElementById('toggleButton');
+        const video = document.getElementById('videoStream');
+        const checkbox = document.getElementById('markLandmarks');
+
+        button.addEventListener('click', () => {
+
+            fetch(`/toggle_button`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.state === "Start") {
+                        button.innerHTML = 'Start Camera';
+                        checkbox.disabled = false;
+                        button.className = 'btn btn-success mt-3';
+                        video.style.display = 'block';
+                        video.src = '/static/camera.png'; // Display the camera.png image when the camera is stopped
+                        document.getElementById('videoClip').pause(); // Stop the video
+
+                        {#    when the camera is stopped, make a request to store the details gathered to the DB (TOßO maybe: change server so this step happens on the server)#}
+                        const movieId = document.body.getAttribute('data-movie-id') || "666dee25fc0879c1c1c67de9";
+                        console.log(document.body.getAttribute('data-movie-id'));
+                        const recordingEmotion = {
+                            movie_id: movieId
+                        };
+
+                        fetch('/addCameraEmotions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(recordingEmotion)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log({data})
+                                let boredCount=data.boredCount.toFixed(1);
+                                let boardCountDiv=document.getElementById("boardCount");
+                                if(boardCountDiv){
+                                    boardCountDiv.innerHTML=`Average tiredness/boredom count: #${boredCount}`
+                                }
+
+                                const emotionLabels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise'];
+                                let emotions = {}
+                                let totalEmotionValue = 0;
+                                emotionLabels.forEach((emotion) => {
+                                    emotions[emotion] = data[emotion]
+                                    totalEmotionValue += data.emotion_chart[emotion];
+                                })
+
+                                // Calculate scaling factor
+                                const scalingFactor = totalEmotionValue > 0 ? 1 / totalEmotionValue : 0;
+
+                                // Store the emotions._id in localStorage
+                                let emotion_chart_id = data.emotion_chart_id;
+                                localStorage.setItem('emotionRecordingId', emotion_chart_id);
+
+                                console.log('Recording emotion added:', emotions);
+                                const progressBars = document.querySelectorAll('.progress-bar');
+
+                                const emotionColors = ['bg-danger', 'bg-success', 'bg-info', 'bg-warning', 'bg-primary', 'bg-secondary'];
+                                progressBars.forEach((bar, index) => {
+                                    const emotion = emotionLabels[index];
+                                    const value =  emotions[emotion] * scalingFactor * 100;// Convert to percentage
+                                    bar.style.width = `${value}%`;
+                                    //bar.innerText = `${emotion.charAt(0).toUpperCase() + emotion.slice(1)}: ${value.toFixed(1)}%`;
+                                    bar.setAttribute('aria-valuenow', value);
+                                    bar.className = `progress-bar ${emotionColors[index]}`; // Update the class for the color
+                                });
+
+                                const emotion_text = document.querySelectorAll('.emotion-text');
+                                emotion_text.forEach((text, index) => {
+                                    const emotion = emotionLabels[index];
+                                    const value = emotions[emotion] * scalingFactor * 100; // Convert to percentage
+                                    console.log({emotion, value})
+                                    console.log(`${formatNumber(value)}% - ${emotion.charAt(0).toUpperCase() + emotion.slice(1)}`)
+                                    text.innerText = `${formatNumber(value)}% - ${emotion.charAt(0).toUpperCase() + emotion.slice(1)}`;
+                                });
+
+                                function formatNumber(num) {
+                                    let [integer, decimal] = num.toFixed(1).split('.');
+                                    integer = integer.padStart(2, '0');
+                                    return `${integer}.${decimal}`;
+                                }
+                            })
+                            .catch(error => console.error('Error adding recording emotion:', error));
+
+                        document.getElementById("redirectToFormContainer").classList.add("show");
+                    } else {
+                        button.innerHTML = 'Stop Camera';
+                        checkbox.disabled = true;
+                        button.className = 'btn btn-danger mt-3';
+                        video.style.display = 'block';
+                        if (checkbox.checked) {
+                            video.src = '/landmarked_video';
+                        } else {
+                            video.src = '/video_feed';
+                        }
+                        document.getElementById('videoClip').play(); // Attempt to play the video
+                    }
+                });
+        });
+
+    });
+
+    $(function () {
+        $('[data-toggle="popover"]').popover({
+            trigger: 'hover'
+        });
+    });
+
+</script>
+</body>
+</html>

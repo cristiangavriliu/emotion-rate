@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title Id="top-title">Movie Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{{ url_for('static', filename='view_clip.js') }}"></script>
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+        }
+
+        .navbar {
+            background-color: #7c16f5; /* Dark blue color */
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: #b3b3b3 !important;
+        }
+
+        /* Style the search button */
+        .search-button {
+            background-color: #ecae0f;
+            color: white;
+            border-color: #ecae0f;
+        }
+
+        .search-button:hover {
+            background-color: #ecae0f;
+            border-color: #ecae0f;
+        }
+
+        /* Style the search button */
+        .search-button:active, .search-button:focus {
+            border-color: #ecae0f !important;
+            background-color: #ecae0f !important;
+        }
+
+        /* Style the search box */
+        .form-control:focus {
+            border-color: #ecae0f; /* Change this to your preferred color */
+            box-shadow: none; /* Remove the default outline */
+        }
+
+        .custom-brand {
+            /* Make the text bold */
+            font-family: 'Roboto', sans-serif; /* Change the font */
+            color: white; /* Make the text white */
+            background-color: #ecae0f; /* Color the box yellow */
+            border-radius: 5px; /* Round the corners of the box */
+            padding-left: 10px; /* Add space to the left */
+            padding-right: 10px;
+        /
+        }
+
+        .stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: left;
+        }
+
+        .stars input[type="radio"] {
+            display: none;
+        }
+
+        .stars label::before {
+            content: "☆";
+            font-size: 20px;
+        }
+
+        .stars input[type="radio"]:checked ~ label::before {
+            content: "★";
+        }
+
+        #logo {
+            height: 40px; /* Adjust this value to fit the navbar height */
+        }
+
+
+        .index-container {
+            display: flex;
+            flex-direction: column; /* Change this to column to make items appear vertically */
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .index-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Add some space between items */
+        }
+
+        .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        .boardCountContainer {
+            padding-right: 155px;
+        }
+
+
+    </style>
+</head>
+<body data-movie-id="{{ movie }}">
+
+<!-- Nav bar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <a href="/">
+        <img src="../static/logo.png" id="logo">
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Top Movies</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">New Movies</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Genre</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Emotional Genre</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about">About Emotion Rate</a></li>
+        </ul>
+
+        <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit"><i
+                    class="bi bi-search"></i></button>
+        </form>
+
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <!-- Video Player -->
+    <div class="row justify-content-center" style="margin-top: 80px">
+        <div class="col-md-8">
+            <video id="videoClip" controls style="width: 100%; height: auto; object-fit: contain">
+                <source src="../static/film/demo.mov" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- Title -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-8 text-left">
+            <h2 id="clipTitle">{{ movie }}</h2>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-8 text-left">
+            <h5>Description</h5>
+            <p id="clipDescription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula vehicula
+                ex, ac semper libero imperdiet in. Morbi accumsan turpis ut ultricies fermentum. Proin vel orci eget
+                nulla congue viverra. Suspendisse potenti. Nullam facilisis ante vitae velit facilisis, at pretium
+                tortor malesuada. Aliquam erat .</p>
+        </div>
+    </div>
+
+
+    <!-- Emotion Rate -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-8">
+            <h5>Emotion Rate</h5>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0"
+                     aria-valuemax="100"></div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 20%" aria-valuenow="20"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-info" role="progressbar" style="width: 25%" aria-valuenow="25"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 15%" aria-valuenow="15"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 10%" aria-valuenow="10"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 15%" aria-valuenow="15"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center mt-3">
+
+        <div class="index-container">
+            <div class="index-item">
+                <div class="color-box bg-danger"></div>
+                <span class="emotion-text"> 00.0% - Angry</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-success"></div>
+                <span class="emotion-text">00.0% - Disgust</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-info"></div>
+                <span class="emotion-text">00.0% - Fear</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-warning"></div>
+                <span class="emotion-text">00.0% - Happy</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box bg-primary"></div>
+                <span class="emotion-text">00.0% - Sad</span>
+            </div>
+            <div class="index-item">
+                <div class="color-box" style="background-color: #6E757C"></div>
+                <span class="emotion-text">00.0% - Surprised</span>
+            </div>
+        </div>
+
+        <div class="row justify-content-center align-items-center mt-2">
+            <div class="col-md-8 d-flex justify-content-center align-items-center">
+                <button id="redirectButton" class="btn btn-danger" style="height: 40px; width: 300px">Start Emote
+                    Recording
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-3 boardCountContainer">
+        <div id="boardCount">Board count:</div>
+    </div>
+    <!-- Comment Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <h5>Reviews:</h5>
+
+            <!-- Random Comments -->
+            <div class="mt-3">
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">User123: ★★★★☆</h6>
+                        <p class="card-text">Blarg! Flibber floo waddle doodle! So zippy and zappy!</p>
+                    </div>
+                </div>
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">MovieFanatic: ★★★☆☆ </h6>
+                        <p class="card-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tempus,
+                            quam at tempor facilisis.</p>
+                    </div>
+                </div>
+                <div class="card bg-dark mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Cinephile42: ★★★★★</h6>
+                        <p class="card-text">Egestas fringilla phasellus faucibus scelerisque eleifend donec pretium
+                            vulputate sapien.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Section Title and Info Icon -->
+            <span style="display: flex; align-items: center;">
+                <h5 style="margin-right: 10px;" class="mt-3">Write your own review: </h5>
+            </span>
+
+            <!-- Star Rating -->
+            <div class="stars">
+                <input type="radio" name="star" id="star5" value="5"><label for="star5"></label>
+                <input type="radio" name="star" id="star4" value="4"><label for="star4"></label>
+                <input type="radio" name="star" id="star3" value="3"><label for="star3"></label>
+                <input type="radio" name="star" id="star2" value="2"><label for="star2"></label>
+                <input type="radio" name="star" id="star1" value="1"><label for="star1"></label>
+            </div>
+
+            <!-- Review Form -->
+            <div class="form-group">
+                <textarea class="form-control" id="comment" rows="3" placeholder="Write a review..."></textarea>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <span data-toggle="popover" data-content="Submit your review Completely anonymously"
+                  style="margin-left: 10px;">
+                <i class="bi bi-info-circle"> </i>
+            </span>
+
+            <br>
+            <br>
+            <br>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover({
+            trigger: 'hover'
+        });
+    });
+
+    document.getElementById('redirectButton').onclick = function () {
+        const movie_id = "{{ movie }}"; // Get the name from the server-side variable
+        window.location.href = "/new_recording/" + movie_id; // Redirect to the new URL
+    };
+</script>
+</body>
+</html>
