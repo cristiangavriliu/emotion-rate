@@ -19,6 +19,15 @@ This project was developed as part of a Group Project during the **Affective Com
 ## Image Collection
 ![S1.png](README_IMG/S1.png)
 
+## Research & Evaluation
+The project was **evaluated through a study** to assess the accuracy of emotion recognition and user perception of the system. The findings indicate:
+- **High accuracy in detecting certain emotions (up to 97% for fear, 92% for anger)**.
+- **Lower accuracy for emotions like disgust (~18%) due to limited training data**.
+- **User satisfaction with the concept and usability of EmotionRate**.
+
+For a deeper understanding of our methodology, research questions, and results, please refer to the **full project report**.
+
+
 ## Tech Stack
 
 ### Frontend
@@ -117,14 +126,6 @@ client = MongoClient("your-mongodb-connection-string")
 python app.py
 ```
 
-## Research & Evaluation
-The project was **evaluated through a study** to assess the accuracy of emotion recognition and user perception of the system. The findings indicate:
-- **High accuracy in detecting certain emotions (up to 97% for fear, 92% for anger)**.
-- **Lower accuracy for emotions like disgust (~18%) due to limited training data**.
-- **User satisfaction with the concept and usability of EmotionRate**.
-
-For a deeper understanding of our methodology, research questions, and results, please refer to the **full project report**.
-
 ## Team Members
 
 | Member     | Current Position |
@@ -134,7 +135,12 @@ For a deeper understanding of our methodology, research questions, and results, 
 | Cristian Gavriliu    | LMU, M.Sc. HCI  |
 | Tudor Teofanescu | LMU, M.Sc. Computer Science |
 
+## License
+
+This project is for **personal use only** and is intended as a reference point for the projects I have completed during my studies.
+
+
 ---
 
-For further details, see the **full research paper** on EmotionRate and its development.
+For further details, see the **full research paper** and **final presentation** on EmotionRate and its development.
 
