@@ -30,13 +30,6 @@ For a deeper understanding of our methodology, research questions, and results, 
 
 ## Tech Stack
 
-### Frontend
-
-- **HTML5**: Page structure.
-- **CSS3**: Styling (layout, colors, fonts).
-- **JavaScript**: Interactive elements.
-- **Bootstrap**: Responsive UI components.
-
 ### Backend
 
 - **Python**: Backend development.
@@ -44,6 +37,14 @@ For a deeper understanding of our methodology, research questions, and results, 
 - **Jinja2**: Template rendering engine.
 - **OpenCV**: Computer vision for face detection.
 - **TensorFlow/Keras**: Machine learning framework for emotion recognition.
+
+### Frontend
+
+- **HTML5**: Page structure.
+- **CSS3**: Styling (layout, colors, fonts).
+- **JavaScript**: Interactive elements.
+- **Bootstrap**: Responsive UI components.
+
 
 ### Data Storage
 
